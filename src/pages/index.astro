@@ -1,0 +1,845 @@
+---
+import '../styles/global.css';
+---
+<html lang="cs" class="scroll-smooth">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Auto Servis R10 – specialista na BMW v Mladé Boleslavi. Diagnostika, servis, pneuservis, klempířina. Bezděčín 90." />
+    <title>Auto Servis R10 | BMW Specialist — Mladá Boleslav</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet" />
+
+    <style>
+      :root {
+        --red:      #ba1c22;
+        --red-dark: #941519;
+        --ink:      #1a1a1a;
+        --muted:    #555;
+        --light:    #f7f6f4;
+        --white:    #fff;
+        --border:   #e0dedd;
+        --header-h: 80px;
+        --fd: 'Barlow Condensed', sans-serif;
+        --fb: 'Barlow', sans-serif;
+      }
+
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+      html   { font-family: var(--fb); background: var(--white); color: var(--ink); -webkit-text-size-adjust: 100%; }
+      body   { overflow-x: hidden; }
+      img    { display: block; max-width: 100%; }
+      a      { color: inherit; }
+      section[id] { scroll-margin-top: var(--header-h); }
+
+      /* ── Header ── */
+      #site-header {
+        position: sticky; top: 0; z-index: 50;
+        height: var(--header-h);
+        background: var(--white);
+        border-bottom: 1px solid var(--border);
+        display: flex; align-items: center;
+      }
+      .h-inner {
+        width: 100%; max-width: 1400px;
+        margin: 0 auto; padding: 0 2rem;
+        display: flex; align-items: center; justify-content: space-between;
+      }
+      .h-logo img { height: 52px; object-fit: contain; }
+
+      .h-nav { display: flex; gap: 2.5rem; }
+      .h-nav a {
+        font-family: var(--fd); font-weight: 700;
+        font-size: 1rem; letter-spacing: 0.18em; text-transform: uppercase;
+        color: var(--muted); text-decoration: none;
+        position: relative; transition: color 0.2s;
+      }
+      .h-nav a::after {
+        content: ''; position: absolute; bottom: -4px; left: 0;
+        width: 0; height: 2px; background: var(--red);
+        transition: width 0.25s ease;
+      }
+      .h-nav a:hover { color: var(--ink); }
+      .h-nav a:hover::after { width: 100%; }
+
+      .h-right { display: flex; align-items: center; gap: 1rem; }
+      .h-fb {
+        display: flex; align-items: center; padding: 0.4rem;
+        opacity: 0.35; transition: opacity 0.2s; text-decoration: none;
+      }
+      .h-fb:hover { opacity: 1; }
+      .h-fb img { width: 20px; height: 20px; filter: brightness(0); }
+
+      .btn-phone {
+        display: flex; align-items: center; gap: 0.5rem;
+        padding: 0.65rem 1.5rem;
+        background: var(--red); color: #fff;
+        font-family: var(--fd); font-weight: 700;
+        font-size: 1rem; letter-spacing: 0.1em; text-transform: uppercase;
+        text-decoration: none; border: 2px solid var(--red);
+        transition: background 0.2s, border-color 0.2s;
+      }
+      .btn-phone:hover { background: var(--red-dark); border-color: var(--red-dark); }
+      .btn-phone img { width: 16px; height: 16px; filter: brightness(0) invert(1); }
+
+      .burger {
+        display: none; background: none; border: none;
+        cursor: pointer; padding: 0.5rem;
+        flex-direction: column; gap: 6px;
+      }
+      .burger span {
+        display: block; width: 26px; height: 2px;
+        background: var(--ink);
+        transition: transform 0.25s, opacity 0.25s;
+      }
+      .burger.open span:nth-child(1) { transform: translateY(8px) rotate(45deg); }
+      .burger.open span:nth-child(2) { opacity: 0; }
+      .burger.open span:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
+
+      #mobile-menu {
+        position: fixed; top: var(--header-h); left: 0; right: 0;
+        background: var(--white); border-top: 1px solid var(--border);
+        padding: 1.5rem 1.25rem 2rem;
+        display: none; flex-direction: column; gap: 0;
+        z-index: 48; max-height: calc(100svh - var(--header-h)); overflow-y: auto;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+      }
+      #mobile-menu.open { display: flex; }
+      #mobile-menu a.m-link {
+        font-family: var(--fd); font-weight: 700;
+        font-size: 1.6rem; letter-spacing: 0.06em; text-transform: uppercase;
+        color: #999; text-decoration: none;
+        padding: 0.75rem 0; border-bottom: 1px solid var(--border);
+        transition: color 0.2s;
+      }
+      #mobile-menu a.m-link:hover { color: var(--ink); }
+      .m-cta { margin-top: 1.5rem; display: flex; flex-direction: column; gap: 1rem; }
+      .m-cta .btn-phone { justify-content: center; font-size: 1.1rem; padding: 0.9rem 1rem; }
+
+      @media (max-width: 860px) {
+        .h-nav, .h-right { display: none; }
+        .burger { display: flex; }
+      }
+
+      /* ── Hero ── */
+      .hero {
+        position: relative;
+        height: calc(100svh - var(--header-h));
+        min-height: 560px;
+        display: flex; align-items: flex-end;
+        overflow: hidden;
+      }
+      .hero-bg { position: absolute; inset: 0; }
+      .hero-bg img {
+        width: 100%; height: 100%;
+        object-fit: cover; object-position: center 45%;
+      }
+      .hero-bg::after {
+        content: ''; position: absolute; inset: 0;
+        background:
+          linear-gradient(to right, rgba(6,6,6,0.97) 0%, rgba(6,6,6,0.78) 45%, rgba(6,6,6,0.35) 100%),
+          linear-gradient(to top,   rgba(6,6,6,0.9)  0%, transparent 50%);
+      }
+      .hero-content {
+        position: relative; z-index: 2;
+        width: 100%; max-width: 1400px;
+        margin: 0 auto; padding: 0 2rem 4rem;
+      }
+      .hero-label {
+        display: flex; align-items: center; gap: 1rem; margin-bottom: 1.75rem;
+      }
+      .hero-label-line { display: block; width: 36px; height: 2px; background: var(--red); flex-shrink: 0; }
+      .hero-label span {
+        font-family: var(--fd); font-weight: 700;
+        font-size: 1rem; letter-spacing: 0.22em; text-transform: uppercase; color: #aaa;
+      }
+      .hero-title {
+        font-family: var(--fd); font-weight: 800;
+        font-size: clamp(4rem, 9vw, 9.5rem);
+        line-height: 0.88; letter-spacing: 0.02em; text-transform: uppercase;
+        color: #fff; margin-bottom: 2.5rem; max-width: 60%;
+      }
+      .m-b { color: #4599FE; }
+      .m-m { color: #0f3169; }
+      .m-w { color: #EE0405; }
+      .hero-bottom { display: flex; align-items: flex-end; gap: 2rem; flex-wrap: wrap; }
+      .hero-sub {
+        font-size: 1rem; line-height: 1.75; color: #aaa; font-weight: 400;
+        max-width: 380px; border-left: 2px solid var(--red); padding-left: 1.25rem;
+      }
+      .btn-hero {
+        display: inline-flex; align-items: center; gap: 0.75rem;
+        padding: 1rem 2.25rem;
+        background: var(--red); color: #fff;
+        font-family: var(--fd); font-weight: 700;
+        font-size: 0.95rem; letter-spacing: 0.2em; text-transform: uppercase;
+        text-decoration: none; border: 2px solid var(--red);
+        transition: background 0.2s, border-color 0.2s;
+        white-space: nowrap; flex-shrink: 0;
+      }
+      .btn-hero:hover { background: var(--red-dark); border-color: var(--red-dark); }
+      .btn-hero svg { flex-shrink: 0; transition: transform 0.2s; }
+      .btn-hero:hover svg { transform: translateX(4px); }
+
+      @media (max-width: 640px) {
+        .hero { height: auto; min-height: 0; flex-direction: column; align-items: stretch; }
+        .hero-bg { position: relative; height: 55vw; min-height: 200px; flex-shrink: 0; }
+        .hero-bg img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center 20%; }
+        .hero-bg::after { background: linear-gradient(to top, rgba(6,6,6,0.95) 0%, rgba(6,6,6,0.2) 70%, transparent 100%); }
+        .hero-content { position: static; padding: 1.5rem 1.25rem 2.5rem; background: #080808; }
+        .hero-title { font-size: clamp(2.6rem, 12vw, 4rem); margin-bottom: 1.25rem; max-width: 100%; }
+        .hero-label span { font-size: 0.8rem; letter-spacing: 0.14em; }
+        .hero-bottom { flex-direction: column; align-items: flex-start; gap: 1.25rem; }
+        .hero-sub { font-size: 0.95rem; max-width: 100%; }
+        .btn-hero { width: 100%; justify-content: center; padding: 1rem 1.5rem; }
+      }
+
+      /* ── Layout helpers ── */
+      .wrap { max-width: 1400px; margin: 0 auto; padding: 0 2rem; }
+      .pad  { padding-top: 6rem; padding-bottom: 6rem; }
+      @media (max-width: 640px) {
+        .wrap { padding: 0 1.25rem; }
+        .pad  { padding-top: 4rem; padding-bottom: 4rem; }
+      }
+
+      .section-head {
+        display: flex; align-items: baseline; gap: 1.5rem;
+        padding-bottom: 1.75rem; border-bottom: 1px solid var(--border);
+        margin-bottom: 4rem;
+      }
+      @media (max-width: 640px) {
+        .section-head { gap: 1rem; padding-bottom: 1.25rem; margin-bottom: 2.5rem; }
+      }
+      .s-num {
+        font-family: var(--fd); font-weight: 800;
+        font-size: 0.72rem; letter-spacing: 0.28em; color: var(--red);
+        padding: 0.2rem 0.55rem; border: 1px solid var(--red); flex-shrink: 0;
+      }
+      .s-title {
+        font-family: var(--fd); font-weight: 800;
+        font-size: clamp(1.75rem, 6vw, 3.25rem);
+        letter-spacing: 0.04em; text-transform: uppercase; line-height: 1; color: var(--ink);
+      }
+
+      .reveal {
+        opacity: 0; transform: translateY(20px);
+        transition: opacity 0.6s ease, transform 0.6s ease;
+      }
+      .reveal.visible { opacity: 1; transform: none; }
+
+      /* ── Služby ── */
+      #sluzby { background: var(--light); }
+
+      .services-grid {
+        display: grid; grid-template-columns: repeat(4, 1fr);
+        border-left: 1px solid var(--border);
+      }
+      @media (max-width: 1024px) { .services-grid { grid-template-columns: repeat(2, 1fr); } }
+      @media (max-width: 540px)  { .services-grid { grid-template-columns: 1fr; } }
+
+      .svc {
+        padding: 2.5rem 2rem;
+        border: 1px solid var(--border); border-left: none;
+        background: var(--white);
+        position: relative; overflow: hidden; transition: background 0.3s;
+      }
+      .svc::before {
+        content: ''; position: absolute; top: 0; left: 0;
+        width: 0; height: 3px; background: var(--red); transition: width 0.4s ease;
+      }
+      .svc:hover { background: var(--light); }
+      .svc:hover::before { width: 100%; }
+      .svc-num {
+        font-family: var(--fd); font-weight: 800; font-size: 4.5rem; line-height: 1;
+        color: var(--border); margin-bottom: 1.75rem; user-select: none; transition: color 0.3s;
+      }
+      .svc:hover .svc-num { color: #c8c6c3; }
+      .svc-icon {
+        width: 30px; height: 30px; margin-bottom: 1rem;
+        filter: invert(19%) sepia(85%) saturate(3020%) hue-rotate(344deg) brightness(95%) contrast(92%);
+      }
+      .svc-name {
+        font-family: var(--fd); font-weight: 700;
+        font-size: 1.2rem; letter-spacing: 0.08em; text-transform: uppercase;
+        color: var(--ink); margin-bottom: 0.75rem;
+      }
+      .svc-desc { font-size: 0.95rem; line-height: 1.75; color: var(--muted); }
+
+      /* ── O nás ── */
+      #o-nas { background: #111; }
+
+      .about-grid { display: flex; flex-direction: column; gap: 5rem; }
+      @media (max-width: 640px) { .about-grid { gap: 3.5rem; } }
+
+      .about-block {
+        display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center;
+      }
+      @media (max-width: 900px) {
+        .about-block { grid-template-columns: 1fr; gap: 2rem; }
+        .about-block .about-img { order: -1; }
+      }
+
+      .about-eyebrow { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.5rem; }
+      .about-eyebrow-line { display: block; width: 28px; height: 2px; background: var(--red); flex-shrink: 0; }
+      .about-eyebrow span {
+        font-family: var(--fd); font-weight: 700;
+        font-size: 0.72rem; letter-spacing: 0.24em; text-transform: uppercase; color: var(--red);
+      }
+      .about-heading {
+        font-family: var(--fd); font-weight: 800;
+        font-size: clamp(1.75rem, 5vw, 3.25rem);
+        line-height: 0.95; letter-spacing: 0.03em; text-transform: uppercase;
+        color: #f5f4f2; margin-bottom: 1.75rem;
+      }
+      .about-heading em { font-style: normal; color: var(--red); }
+      .about-body {
+        font-size: 1rem; line-height: 1.85; color: #aaa;
+        font-weight: 400; margin-bottom: 1.25rem;
+      }
+      .about-body:last-of-type { margin-bottom: 0; }
+      .about-list { list-style: none; display: flex; flex-direction: column; gap: 0.75rem; }
+      .about-list li {
+        display: flex; align-items: center; gap: 0.9rem;
+        font-size: 1rem; font-weight: 500; color: #ddd;
+      }
+      .about-list li::before {
+        content: ''; display: block; width: 22px; height: 2px; background: var(--red); flex-shrink: 0;
+      }
+      .about-img { overflow: hidden; background: #1a1a1a; aspect-ratio: 2 / 1; }
+      @media (max-width: 900px) { .about-img { aspect-ratio: 16/9; } }
+      .about-img img { width: 100%; height: 100%; object-fit: cover; transition: transform 1.2s ease; }
+      .about-img:hover img { transform: scale(1.04); }
+
+      /* ── Kontakt ── */
+      #kontakt { background: var(--white); }
+
+      .contact-grid {
+        display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: start;
+      }
+      @media (max-width: 900px) { .contact-grid { grid-template-columns: 1fr; gap: 3rem; } }
+
+      .cd-block { margin-bottom: 2.5rem; }
+      .cd-label {
+        font-family: var(--fd); font-weight: 700;
+        font-size: 0.7rem; letter-spacing: 0.24em; text-transform: uppercase;
+        color: var(--red); margin-bottom: 0.5rem;
+      }
+      .cd-value {
+        font-family: var(--fd); font-weight: 700; font-size: 1.5rem;
+        letter-spacing: 0.04em; color: var(--ink);
+        text-decoration: none; display: block; transition: color 0.2s;
+      }
+      .cd-value:hover { color: var(--red); }
+      .cd-address { font-size: 1rem; font-weight: 400; line-height: 1.75; color: var(--muted); font-style: normal; }
+
+      .map-wrap { height: 300px; overflow: hidden; border: 1px solid var(--border); position: relative; }
+      .map-wrap iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; filter: grayscale(25%); }
+
+      .form-wrap { position: relative; overflow: hidden; }
+      .form-title {
+        font-family: var(--fd); font-weight: 700;
+        font-size: 0.72rem; letter-spacing: 0.22em; text-transform: uppercase;
+        color: var(--muted); margin-bottom: 2rem; padding-bottom: 1.25rem;
+        border-bottom: 1px solid var(--border);
+      }
+      .form { display: flex; flex-direction: column; gap: 1.5rem; }
+      .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+      @media (max-width: 540px) { .form-row { grid-template-columns: 1fr; } }
+
+      .form-group { display: flex; flex-direction: column; gap: 0.5rem; }
+      .form-label {
+        font-family: var(--fd); font-weight: 700;
+        font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; color: #888;
+      }
+      .form-label .req { color: var(--red); }
+      .form-label .opt { font-weight: 400; letter-spacing: 0.04em; text-transform: none; font-size: 0.82rem; color: #bbb; }
+
+      .form-input, .form-textarea {
+        width: 100%; padding: 0.9rem 1rem;
+        background: var(--white); border: 1px solid var(--border); border-bottom: 2px solid var(--border);
+        color: var(--ink); font-family: var(--fb); font-size: 1rem; font-weight: 400;
+        outline: none; border-radius: 0; -webkit-appearance: none; appearance: none;
+        transition: border-color 0.2s, background 0.2s;
+      }
+      .form-input::placeholder, .form-textarea::placeholder { color: #ccc; }
+      .form-input:focus, .form-textarea:focus { border-bottom-color: var(--ink); }
+      .form-textarea { resize: none; }
+      .form-input.invalid, .form-textarea.invalid { border-bottom-color: var(--red); background: #fff8f8; }
+      .form-input.valid,   .form-textarea.valid   { border-bottom-color: #16a34a; }
+
+      .field-error { font-size: 0.82rem; color: var(--red); font-weight: 500; display: none; }
+      .field-error.show { display: block; }
+
+      .captcha-row {
+        display: flex; align-items: flex-end; gap: 1rem;
+        flex-wrap: wrap; padding-top: 1.25rem; border-top: 1px solid var(--border);
+      }
+      @media (max-width: 540px) {
+        .captcha-row { flex-direction: column; align-items: stretch; }
+        .captcha-row .captcha-box,
+        .captcha-row .captcha-ans-box { width: 100%; }
+        .captcha-input { width: 100%; }
+        .btn-submit { width: 100%; justify-content: center; margin-left: 0; margin-top: 0.5rem; }
+      }
+      .captcha-box, .captcha-ans-box { display: flex; flex-direction: column; gap: 0.5rem; }
+      #captcha-question {
+        font-family: var(--fd); font-weight: 700; font-size: 1.2rem; letter-spacing: 0.12em;
+        background: var(--ink); color: #fff; padding: 0.65rem 1.1rem; user-select: none;
+      }
+      .captcha-input {
+        width: 80px; padding: 0.65rem 0.75rem;
+        background: var(--white); border: 1px solid var(--border); border-bottom: 2px solid var(--border);
+        color: var(--ink); font-family: var(--fd); font-size: 1.2rem; font-weight: 700; text-align: center;
+        outline: none; border-radius: 0; -webkit-appearance: none; appearance: none;
+        transition: border-color 0.2s;
+      }
+      .captcha-input:focus { border-bottom-color: var(--ink); }
+
+      .btn-submit {
+        margin-left: auto; display: inline-flex; align-items: center; gap: 0.65rem;
+        padding: 0.9rem 2.25rem;
+        background: var(--ink); color: #fff;
+        font-family: var(--fd); font-weight: 700;
+        font-size: 0.88rem; letter-spacing: 0.2em; text-transform: uppercase;
+        border: 2px solid var(--ink); cursor: pointer; border-radius: 0;
+        transition: background 0.2s, border-color 0.2s;
+      }
+      .btn-submit:hover { background: var(--red-dark); border-color: var(--red-dark); }
+      .btn-submit img { width: 15px; height: 15px; filter: brightness(0) invert(1); transition: transform 0.2s; }
+      .btn-submit:hover img { transform: translateX(3px); }
+
+      #captcha-error { font-size: 0.82rem; color: var(--red); font-weight: 500; display: none; width: 100%; }
+      #captcha-error.show { display: block; }
+
+      #form-success {
+        position: absolute; inset: 0; background: var(--white);
+        display: none; flex-direction: column;
+        align-items: center; justify-content: center;
+        text-align: center; gap: 1.5rem; padding: 2rem;
+      }
+      #form-success.show { display: flex; }
+      .s-check {
+        width: 64px; height: 64px; border: 2px solid #16a34a;
+        display: flex; align-items: center; justify-content: center;
+      }
+      .s-check svg { width: 30px; height: 30px; color: #16a34a; }
+      .s-title-ok {
+        font-family: var(--fd); font-weight: 800;
+        font-size: 2rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink);
+      }
+      .s-sub { font-size: 1rem; color: var(--muted); max-width: 300px; line-height: 1.75; }
+      .btn-reset {
+        font-family: var(--fd); font-size: 0.7rem; font-weight: 700;
+        letter-spacing: 0.22em; text-transform: uppercase;
+        color: var(--red); background: none; border: none; cursor: pointer; padding: 0;
+        transition: opacity 0.2s;
+      }
+      .btn-reset:hover { opacity: 0.65; }
+
+      /* ── Footer ── */
+      footer { background: #111; border-top: 1px solid #222; padding: 2.75rem 0; }
+      .foot-inner {
+        max-width: 1400px; margin: 0 auto; padding: 0 2rem;
+        display: flex; align-items: center; justify-content: space-between;
+        flex-wrap: wrap; gap: 1rem;
+      }
+      @media (max-width: 640px) {
+        .foot-inner { flex-direction: column; align-items: flex-start; gap: 0.5rem; padding: 0 1.25rem; }
+        .foot-col:last-child { text-align: left; }
+      }
+      .foot-col { font-size: 0.85rem; color: #555; line-height: 1.8; }
+      .foot-col a { color: #666; text-decoration: none; transition: color 0.2s; }
+      .foot-col a:hover { color: #fff; }
+      .foot-fb {
+        display: flex; align-items: center; gap: 0.6rem;
+        font-size: 0.85rem; color: #555; text-decoration: none; transition: color 0.2s;
+      }
+      .foot-fb:hover { color: #1877F2; }
+      .foot-fb img { width: 18px; height: 18px; filter: brightness(0) invert(1) opacity(0.3); transition: filter 0.2s; }
+      .foot-fb:hover img { filter: none; }
+    </style>
+  </head>
+  <body>
+
+    <!-- HLAVIČKA -->
+    <header id="site-header" role="banner">
+      <div class="h-inner">
+        <a href="/" class="h-logo" aria-label="Auto Servis R10 – domů">
+          <img src="/logo.jpg" alt="Autoservis R10" width="150" height="52" />
+        </a>
+        <nav class="h-nav" aria-label="Hlavní navigace">
+          <a href="#sluzby">Služby</a>
+          <a href="#o-nas">O nás</a>
+          <a href="#kontakt">Kontakt</a>
+        </nav>
+        <div class="h-right">
+          <a href="https://www.facebook.com/profile.php?id=100063701793825" target="_blank" rel="noopener noreferrer" class="h-fb" aria-label="Facebook">
+            <img src="/icons/facebook.svg" alt="" aria-hidden="true" />
+          </a>
+          <a href="tel:+420603534639" class="btn-phone">
+            <img src="/icons/phone.svg" alt="" aria-hidden="true" />
+            603 534 639
+          </a>
+        </div>
+        <button id="burger-btn" class="burger" aria-label="Otevřít menu" aria-expanded="false" aria-controls="mobile-menu" type="button">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+
+      <div id="mobile-menu" role="dialog" aria-label="Mobilní navigace">
+        <a href="#sluzby"  class="m-link">Služby</a>
+        <a href="#o-nas"   class="m-link">O nás</a>
+        <a href="#kontakt" class="m-link">Kontakt</a>
+        <div class="m-cta">
+          <a href="tel:+420603534639" class="btn-phone">
+            <img src="/icons/phone.svg" alt="" aria-hidden="true" />
+            603 534 639
+          </a>
+        </div>
+      </div>
+    </header>
+
+
+    <!-- HERO -->
+    <section class="hero" aria-label="Úvodní banner">
+      <div class="hero-bg">
+        <img src="/hero.jpg" alt="Auto Servis R10 Bezděčín" fetchpriority="high" width="2048" height="1152" />
+      </div>
+      <div class="hero-content">
+        <div class="hero-label">
+          <span class="hero-label-line" aria-hidden="true"></span>
+          <span>Bezděčín 90 — Mladá Boleslav</span>
+        </div>
+        <h1 class="hero-title">
+          Specialista<br />
+          na <span class="m-b">B</span><span class="m-m">M</span><span class="m-w">W</span>
+        </h1>
+        <div class="hero-bottom">
+          <p class="hero-sub">
+            Kompletní péče o vozidla a motocykly. Diagnostika, pravidelný servis, klempířina, pneuservis.
+          </p>
+          <a href="#kontakt" class="btn-hero">
+            Sjednat termín
+            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M12 5l7 7-7 7"/>
+            </svg>
+          </a>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- 01 SLUŽBY -->
+    <section id="sluzby">
+      <div class="wrap pad">
+        <div class="section-head reveal">
+          <span class="s-num">01</span>
+          <h2 class="s-title">Naše služby</h2>
+        </div>
+        <div class="services-grid">
+          <div class="svc reveal">
+            <div class="svc-num">01</div>
+            <img src="/icons/activity.svg" alt="" aria-hidden="true" class="svc-icon" />
+            <h3 class="svc-name">Diagnostika</h3>
+            <p class="svc-desc">Komplexní počítačová diagnostika pro přesné nalezení závad elektroniky i motoru.</p>
+          </div>
+          <div class="svc reveal" style="transition-delay:.07s">
+            <div class="svc-num">02</div>
+            <img src="/icons/settings-2.svg" alt="" aria-hidden="true" class="svc-icon" />
+            <h3 class="svc-name">Pravidelný servis</h3>
+            <p class="svc-desc">Výměny olejů, filtrů, brzd a veškerá údržba pro dlouhou životnost vozu i motocyklu.</p>
+          </div>
+          <div class="svc reveal" style="transition-delay:.14s">
+            <div class="svc-num">03</div>
+            <img src="/icons/circle-dashed.svg" alt="" aria-hidden="true" class="svc-icon" />
+            <h3 class="svc-name">Pneuservis</h3>
+            <p class="svc-desc">Přezutí, vyvážení a kontrola pneumatik pro bezpečnou jízdu za každého počasí.</p>
+          </div>
+          <div class="svc reveal" style="transition-delay:.21s">
+            <div class="svc-num">04</div>
+            <img src="/icons/wrench.svg" alt="" aria-hidden="true" class="svc-icon" />
+            <h3 class="svc-name">Klempířina & Díly</h3>
+            <p class="svc-desc">Opravy po nehodách, klempířské práce a kvalitní náhradní díly pro váš vůz.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- 02 O NÁS -->
+    <section id="o-nas">
+      <div class="wrap pad">
+        <div class="section-head reveal" style="border-bottom-color:#222">
+          <span class="s-num" style="border-color:#ba1c22">02</span>
+          <h2 class="s-title" style="color:#f5f4f2">O nás</h2>
+        </div>
+        <div class="about-grid">
+
+          <div class="about-block">
+            <div class="reveal">
+              <div class="about-eyebrow">
+                <span class="about-eyebrow-line" aria-hidden="true"></span>
+                <span>Přístup & filozofie</span>
+              </div>
+              <h3 class="about-heading">Poctivá práce,<br /><em>žádné kompromisy</em></h3>
+              <p class="about-body">
+                V Auto Servis R10 kombinujeme dlouholeté zkušenosti s opravdovou vášní pro auta.
+                Ke každému vozu přistupujeme poctivě a s důrazem na to, aby oprava dávala smysl.
+                Zaměřujeme se primárně na vozy a motocykly značky BMW.
+              </p>
+              <ul class="about-list" role="list">
+                <li>Specializace na vozy BMW</li>
+                <li>Servis motocyklů BMW a skútrů</li>
+                <li>Precizní klempířské práce</li>
+              </ul>
+            </div>
+            <div class="about-img reveal">
+              <img src="/servis.jpg" alt="Dílna Auto Servis R10" loading="lazy" width="1482" height="704" />
+            </div>
+          </div>
+
+          <div class="about-block">
+            <div class="about-img reveal">
+              <img src="/bmw2.jpg" alt="BMW v servisu R10" loading="lazy" />
+            </div>
+            <div class="reveal">
+              <div class="about-eyebrow">
+                <span class="about-eyebrow-line" aria-hidden="true"></span>
+                <span>Vybavení</span>
+              </div>
+              <h3 class="about-heading">Originální<br /><em>diagnostika</em></h3>
+              <p class="about-body">
+                Díky modernímu vybavení a originálním diagnostickým přístrojům dokážeme najít přesnou příčinu problému — místo abychom naslepo měnili drahé díly.
+              </p>
+              <p class="about-body">
+                Rychle a přesně odhalíme závady na motoru, převodovce i v elektronice vašeho vozu. Ušetříme vám čas i peníze.
+              </p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+
+    <!-- 03 KONTAKT -->
+    <section id="kontakt">
+      <div class="wrap pad">
+        <div class="section-head reveal">
+          <span class="s-num">03</span>
+          <h2 class="s-title">Kontakt</h2>
+        </div>
+        <div class="contact-grid">
+
+          <div class="reveal">
+            <div class="cd-block">
+              <p class="cd-label">Adresa</p>
+              <address class="cd-address">
+                Auto Servis R10<br />
+                Bezděčín 90<br />
+                293 01 Mladá Boleslav
+              </address>
+            </div>
+            <div class="cd-block">
+              <p class="cd-label">Telefon</p>
+              <a href="tel:+420603534639" class="cd-value">603 534 639</a>
+            </div>
+            <div class="cd-block">
+              <p class="cd-label">E-mail</p>
+              <a href="mailto:info@autoservisr10.cz" class="cd-value" style="font-size:1.15rem">info@autoservisr10.cz</a>
+            </div>
+            <div class="map-wrap">
+              <iframe
+                src="https://maps.google.com/maps?q=50.382573,14.892305&t=&z=15&ie=UTF8&iwloc=&output=embed"
+                allowfullscreen loading="lazy"
+                referrerpolicy="no-referrer-when-downgrade"
+                title="Mapa – Auto Servis R10"
+              ></iframe>
+            </div>
+          </div>
+
+          <div class="form-wrap reveal">
+            <p class="form-title">Napište nám</p>
+            <form id="contact-form" novalidate class="form">
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="name" class="form-label">Jméno a příjmení <span class="req">*</span></label>
+                  <input type="text" id="name" name="name" required autocomplete="name" placeholder="Jan Novák" class="form-input" />
+                  <p class="field-error" id="name-error" role="alert"></p>
+                </div>
+                <div class="form-group">
+                  <label for="email" class="form-label">E-mail <span class="req">*</span></label>
+                  <input type="email" id="email" name="email" required autocomplete="email" placeholder="jan@email.cz" class="form-input" />
+                  <p class="field-error" id="email-error" role="alert"></p>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="phone" class="form-label">Telefon <span class="opt">(nepovinné)</span></label>
+                <input type="tel" id="phone" name="phone" autocomplete="tel" placeholder="+420 xxx xxx xxx" class="form-input" />
+              </div>
+              <div class="form-group">
+                <label for="message" class="form-label">Zpráva <span class="req">*</span></label>
+                <textarea id="message" name="message" rows="5" required placeholder="Popište, s čím potřebujete pomoci..." class="form-textarea"></textarea>
+                <p class="field-error" id="message-error" role="alert"></p>
+              </div>
+              <div class="captcha-row">
+                <div class="captcha-box">
+                  <span class="form-label">Ověření</span>
+                  <div id="captcha-question" aria-live="polite">1 + 2 = ?</div>
+                </div>
+                <div class="captcha-ans-box">
+                  <label for="captcha-answer" class="form-label">Výsledek <span class="req">*</span></label>
+                  <input type="number" id="captcha-answer" inputmode="numeric" placeholder="?" required class="captcha-input" />
+                </div>
+                <button type="submit" class="btn-submit">
+                  Odeslat
+                  <img src="/icons/send.svg" alt="" aria-hidden="true" />
+                </button>
+                <p id="captcha-error" role="alert"></p>
+              </div>
+            </form>
+
+            <div id="form-success" role="status" aria-live="polite">
+              <div class="s-check">
+                <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+                </svg>
+              </div>
+              <p class="s-title-ok">Odesláno</p>
+              <p class="s-sub">Děkujeme. Ozveme se vám co nejdříve.</p>
+              <button id="form-reset-btn" class="btn-reset" type="button">Odeslat další zprávu</button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+
+    <!-- FOOTER -->
+    <footer role="contentinfo">
+      <div class="foot-inner">
+        <div class="foot-col">
+          <p>&copy; Auto Servis R10 — Bezděčín, Mladá Boleslav</p>
+          <p><a href="https://autoservisr10.cz">autoservisr10.cz</a></p>
+        </div>
+        <a href="https://www.facebook.com/profile.php?id=100063701793825" target="_blank" rel="noopener noreferrer" class="foot-fb" aria-label="Sledujte nás na Facebooku">
+          <img src="/icons/facebook.svg" alt="" aria-hidden="true" />
+          Sledujte nás na Facebooku
+        </a>
+        <div class="foot-col" style="text-align:right">
+          <p>Realizováno <a href="https://webresent.cz" target="_blank" rel="noopener noreferrer">Webresent</a></p>
+        </div>
+      </div>
+    </footer>
+
+
+    <!-- SKRIPTY -->
+    <script>
+      // Header výška
+      function setHeaderHeight(): void {
+        const h = document.getElementById('site-header');
+        if (h) document.documentElement.style.setProperty('--header-h', `${h.offsetHeight}px`);
+      }
+      document.addEventListener('DOMContentLoaded', setHeaderHeight);
+      window.addEventListener('load',   setHeaderHeight);
+      window.addEventListener('resize', setHeaderHeight);
+
+      // Mobilní menu
+      const burgerBtn  = document.getElementById('burger-btn')  as HTMLButtonElement | null;
+      const mobileMenu = document.getElementById('mobile-menu') as HTMLDivElement   | null;
+      function toggleMenu(): void {
+        if (!burgerBtn || !mobileMenu) return;
+        const isOpen = mobileMenu.classList.contains('open');
+        mobileMenu.classList.toggle('open', !isOpen);
+        burgerBtn.classList.toggle('open', !isOpen);
+        burgerBtn.setAttribute('aria-expanded', String(!isOpen));
+        document.body.style.overflow = isOpen ? '' : 'hidden';
+      }
+      burgerBtn?.addEventListener('click', toggleMenu);
+      document.querySelectorAll<HTMLAnchorElement>('.m-link').forEach(l =>
+        l.addEventListener('click', () => { if (mobileMenu?.classList.contains('open')) toggleMenu(); })
+      );
+      window.addEventListener('resize', () => {
+        if (window.innerWidth >= 860 && mobileMenu?.classList.contains('open')) toggleMenu();
+      });
+
+      // Scroll reveal
+      const ro = new IntersectionObserver(
+        entries => entries.forEach(e => {
+          if (e.isIntersecting) { e.target.classList.add('visible'); ro.unobserve(e.target); }
+        }),
+        { threshold: 0.1 }
+      );
+      document.querySelectorAll<HTMLElement>('.reveal').forEach(el => ro.observe(el));
+
+      // Formulář
+      (function (): void {
+        const formEl     = document.getElementById('contact-form')     as HTMLFormElement   | null;
+        const questionEl = document.getElementById('captcha-question') as HTMLElement       | null;
+        const answerEl   = document.getElementById('captcha-answer')   as HTMLInputElement  | null;
+        const captchaErr = document.getElementById('captcha-error')    as HTMLElement       | null;
+        const successEl  = document.getElementById('form-success')     as HTMLElement       | null;
+        const resetBtn   = document.getElementById('form-reset-btn')   as HTMLButtonElement | null;
+        if (!formEl || !questionEl || !answerEl) return;
+
+        let correct = 0;
+        function genCaptcha(): void {
+          const a = Math.floor(Math.random() * 6) + 1;
+          const b = Math.floor(Math.random() * 4) + 1;
+          correct = a + b;
+          questionEl!.textContent = `${a} + ${b} = ?`;
+          answerEl!.value = '';
+          if (captchaErr) { captchaErr.textContent = ''; captchaErr.classList.remove('show'); }
+        }
+        genCaptcha();
+
+        type Rule = { input: HTMLInputElement | HTMLTextAreaElement; err: HTMLElement; validate: (v: string) => string | null; };
+        const rules: Rule[] = ([
+          { input: document.getElementById('name')    as HTMLInputElement,    err: document.getElementById('name-error')!,    validate: (v: string) => v.trim().length < 2 ? 'Zadejte jméno a příjmení.' : null },
+          { input: document.getElementById('email')   as HTMLInputElement,    err: document.getElementById('email-error')!,   validate: (v: string) => !v.trim() ? 'E-mail je povinný.' : !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) ? 'Neplatná e-mailová adresa.' : null },
+          { input: document.getElementById('message') as HTMLTextAreaElement, err: document.getElementById('message-error')!, validate: (v: string) => v.trim().length < 5 ? 'Zpráva nesmí být prázdná.' : null },
+        ] as Rule[]).filter(r => r.input && r.err);
+
+        function validateField(r: Rule): boolean {
+          const msg = r.validate(r.input.value);
+          if (msg) {
+            r.err.textContent = msg; r.err.classList.add('show');
+            r.input.classList.add('invalid'); r.input.classList.remove('valid');
+            return false;
+          }
+          r.err.textContent = ''; r.err.classList.remove('show');
+          r.input.classList.remove('invalid');
+          if (r.input.value.trim()) r.input.classList.add('valid');
+          return true;
+        }
+        rules.forEach(r => {
+          r.input.addEventListener('blur',  () => validateField(r));
+          r.input.addEventListener('input', () => { if (r.input.classList.contains('invalid')) validateField(r); });
+        });
+
+        formEl.addEventListener('submit', (e: Event) => {
+          e.preventDefault();
+          const allValid   = rules.map(validateField).every(Boolean);
+          const captchaVal = parseInt(answerEl!.value, 10);
+          const captchaOk  = !isNaN(captchaVal) && captchaVal === correct;
+          if (!captchaOk && captchaErr) {
+            captchaErr.textContent = 'Špatný výsledek. Zkuste znovu.';
+            captchaErr.classList.add('show');
+            genCaptcha(); answerEl?.focus();
+          }
+          if (!allValid || !captchaOk) { (formEl.querySelector<HTMLElement>('.invalid'))?.focus(); return; }
+          successEl?.classList.add('show');
+        });
+
+        resetBtn?.addEventListener('click', () => {
+          formEl.reset();
+          rules.forEach(r => { r.input.classList.remove('valid','invalid'); r.err.textContent = ''; r.err.classList.remove('show'); });
+          genCaptcha(); successEl?.classList.remove('show');
+        });
+      })();
+    </script>
+
+  </body>
+</html>
