@@ -21,10 +21,14 @@ import '../styles/global.css';
         --light:    #f7f6f4;
         --white:    #fff;
         --border:   #e0dedd;
-        /* Pevná výška headeru — nesmí záviset na JS měření sebe sama */
-        --header-h: 72px;
-        /* Viewport výška — nastavuje JS při loadu, update jen při změně šířky */
-        --real-vh: 100svh;
+
+        /* Header výška odvozená z obsahu — stejný přístup jako Tank ONO.
+           Logo má height: var(--logo-h), header má padding var(--header-py) nahoře i dole.
+           JS tuto proměnnou nikdy nepřepisuje → žádný feedback loop, žádný blik. */
+        --logo-h:    52px;
+        --header-py: 10px;
+        --header-h:  calc(var(--logo-h) + var(--header-py) * 2);
+
         --fd: 'Barlow Condensed', sans-serif;
         --fb: 'Barlow', sans-serif;
       }
@@ -39,8 +43,9 @@ import '../styles/global.css';
       /* ── Header ── */
       #site-header {
         position: sticky; top: 0; z-index: 50;
-        /* Pevná výška — JS ji nemění, jen čte pro ostatní elementy */
         height: var(--header-h);
+        padding-top: var(--header-py);
+        padding-bottom: var(--header-py);
         background: var(--white);
         border-bottom: 1px solid var(--border);
         display: flex; align-items: center;
@@ -50,7 +55,7 @@ import '../styles/global.css';
         margin: 0 auto; padding: 0 2rem;
         display: flex; align-items: center; justify-content: space-between;
       }
-      .h-logo img { height: 52px; object-fit: contain; }
+      .h-logo img { height: var(--logo-h); object-fit: contain; }
 
       .h-nav { display: flex; gap: 2.5rem; }
       .h-nav a {
@@ -106,7 +111,7 @@ import '../styles/global.css';
         background: var(--white); border-top: 1px solid var(--border);
         padding: 1.5rem 1.25rem 2rem;
         display: none; flex-direction: column; gap: 0;
-        z-index: 48; max-height: calc(var(--real-vh) - var(--header-h)); overflow-y: auto;
+        z-index: 48; max-height: calc(100svh - var(--header-h)); overflow-y: auto;
         box-shadow: 0 8px 24px rgba(0,0,0,0.1);
       }
       #mobile-menu.open { display: flex; }
@@ -129,8 +134,9 @@ import '../styles/global.css';
       /* ── Hero ── */
       .hero {
         position: relative;
-        /* --real-vh je nastaveno JS při loadu a mění se jen při změně šířky → Firefox neblbne */
-        height: calc(var(--real-vh) - var(--header-h));
+        /* 100vh je stabilní — nereaguje na scroll lištu v mobilních prohlížečích.
+           Výsledek je totožný s přístupem v Tank ONO (calc(100vh - fixed-px)). */
+        height: calc(100vh - var(--header-h));
         min-height: 560px;
         display: flex; align-items: flex-end;
         overflow: hidden;
@@ -742,45 +748,6 @@ import '../styles/global.css';
 
     <!-- SKRIPTY -->
     <script>
-      // ── Viewport výška — fix pro Firefox a mobilní prohlížeče ──────────────
-      // Uložíme výšku při loadu. Aktualizujeme JEN při změně šířky (ne při scrollu
-      // kdy Firefox/Chrome skrývají/ukazují adresní lištu a měnili by výšku stránky).
-      let lastWidth = window.innerWidth;
-
-      function setVh(): void {
-        document.documentElement.style.setProperty('--real-vh', `${window.innerHeight}px`);
-      }
-
-      // Nastavíme hned — před prvním renderem pokud možno
-      setVh();
-      // A ještě jednou po loadu (fonty, obrázky mohly změnit layout)
-      window.addEventListener('load', setVh);
-
-      window.addEventListener('resize', () => {
-        const currentWidth = window.innerWidth;
-        // Aktualizujeme výšku POUZE pokud se změnila šířka okna.
-        // Čistá změna výšky = scroll lišta prohlížeče = ignorujeme.
-        if (currentWidth !== lastWidth) {
-          lastWidth = currentWidth;
-          setVh();
-        }
-      });
-
-      // ── Header výška pro scroll-margin-top a mobilní menu ──────────────────
-      // Header má pevnou výšku v CSS (--header-h: 72px), tady ji jen potvrdíme
-      // pro případ že by se změnila (např. při velmi malém displeji).
-      // Nezapisujeme zpět do #site-header — jen do CSS proměnné pro ostatní.
-      function syncHeaderVar(): void {
-        const h = document.getElementById('site-header');
-        if (h) {
-          document.documentElement.style.setProperty('--header-h', `${h.offsetHeight}px`);
-        }
-      }
-      window.addEventListener('load', syncHeaderVar);
-      window.addEventListener('resize', () => {
-        if (window.innerWidth !== lastWidth) syncHeaderVar();
-      });
-
       // ── Mobilní menu ────────────────────────────────────────────────────────
       const burgerBtn  = document.getElementById('burger-btn')  as HTMLButtonElement | null;
       const mobileMenu = document.getElementById('mobile-menu') as HTMLDivElement   | null;
