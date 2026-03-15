@@ -21,7 +21,10 @@ import '../styles/global.css';
         --light:    #f7f6f4;
         --white:    #fff;
         --border:   #e0dedd;
-        --header-h: 80px;
+        /* Pevná výška headeru — nesmí záviset na JS měření sebe sama */
+        --header-h: 72px;
+        /* Viewport výška — nastavuje JS při loadu, update jen při změně šířky */
+        --real-vh: 100svh;
         --fd: 'Barlow Condensed', sans-serif;
         --fb: 'Barlow', sans-serif;
       }
@@ -36,6 +39,7 @@ import '../styles/global.css';
       /* ── Header ── */
       #site-header {
         position: sticky; top: 0; z-index: 50;
+        /* Pevná výška — JS ji nemění, jen čte pro ostatní elementy */
         height: var(--header-h);
         background: var(--white);
         border-bottom: 1px solid var(--border);
@@ -102,7 +106,7 @@ import '../styles/global.css';
         background: var(--white); border-top: 1px solid var(--border);
         padding: 1.5rem 1.25rem 2rem;
         display: none; flex-direction: column; gap: 0;
-        z-index: 48; max-height: calc(100svh - var(--header-h)); overflow-y: auto;
+        z-index: 48; max-height: calc(var(--real-vh) - var(--header-h)); overflow-y: auto;
         box-shadow: 0 8px 24px rgba(0,0,0,0.1);
       }
       #mobile-menu.open { display: flex; }
@@ -125,7 +129,8 @@ import '../styles/global.css';
       /* ── Hero ── */
       .hero {
         position: relative;
-        height: calc(100svh - var(--header-h));
+        /* --real-vh je nastaveno JS při loadu a mění se jen při změně šířky → Firefox neblbne */
+        height: calc(var(--real-vh) - var(--header-h));
         min-height: 560px;
         display: flex; align-items: flex-end;
         overflow: hidden;
@@ -737,18 +742,49 @@ import '../styles/global.css';
 
     <!-- SKRIPTY -->
     <script>
-      // Header výška
-      function setHeaderHeight(): void {
-        const h = document.getElementById('site-header');
-        if (h) document.documentElement.style.setProperty('--header-h', `${h.offsetHeight}px`);
-      }
-      document.addEventListener('DOMContentLoaded', setHeaderHeight);
-      window.addEventListener('load',   setHeaderHeight);
-      window.addEventListener('resize', setHeaderHeight);
+      // ── Viewport výška — fix pro Firefox a mobilní prohlížeče ──────────────
+      // Uložíme výšku při loadu. Aktualizujeme JEN při změně šířky (ne při scrollu
+      // kdy Firefox/Chrome skrývají/ukazují adresní lištu a měnili by výšku stránky).
+      let lastWidth = window.innerWidth;
 
-      // Mobilní menu
+      function setVh(): void {
+        document.documentElement.style.setProperty('--real-vh', `${window.innerHeight}px`);
+      }
+
+      // Nastavíme hned — před prvním renderem pokud možno
+      setVh();
+      // A ještě jednou po loadu (fonty, obrázky mohly změnit layout)
+      window.addEventListener('load', setVh);
+
+      window.addEventListener('resize', () => {
+        const currentWidth = window.innerWidth;
+        // Aktualizujeme výšku POUZE pokud se změnila šířka okna.
+        // Čistá změna výšky = scroll lišta prohlížeče = ignorujeme.
+        if (currentWidth !== lastWidth) {
+          lastWidth = currentWidth;
+          setVh();
+        }
+      });
+
+      // ── Header výška pro scroll-margin-top a mobilní menu ──────────────────
+      // Header má pevnou výšku v CSS (--header-h: 72px), tady ji jen potvrdíme
+      // pro případ že by se změnila (např. při velmi malém displeji).
+      // Nezapisujeme zpět do #site-header — jen do CSS proměnné pro ostatní.
+      function syncHeaderVar(): void {
+        const h = document.getElementById('site-header');
+        if (h) {
+          document.documentElement.style.setProperty('--header-h', `${h.offsetHeight}px`);
+        }
+      }
+      window.addEventListener('load', syncHeaderVar);
+      window.addEventListener('resize', () => {
+        if (window.innerWidth !== lastWidth) syncHeaderVar();
+      });
+
+      // ── Mobilní menu ────────────────────────────────────────────────────────
       const burgerBtn  = document.getElementById('burger-btn')  as HTMLButtonElement | null;
       const mobileMenu = document.getElementById('mobile-menu') as HTMLDivElement   | null;
+
       function toggleMenu(): void {
         if (!burgerBtn || !mobileMenu) return;
         const isOpen = mobileMenu.classList.contains('open');
@@ -757,6 +793,7 @@ import '../styles/global.css';
         burgerBtn.setAttribute('aria-expanded', String(!isOpen));
         document.body.style.overflow = isOpen ? '' : 'hidden';
       }
+
       burgerBtn?.addEventListener('click', toggleMenu);
       document.querySelectorAll<HTMLAnchorElement>('.m-link').forEach(l =>
         l.addEventListener('click', () => { if (mobileMenu?.classList.contains('open')) toggleMenu(); })
@@ -765,7 +802,7 @@ import '../styles/global.css';
         if (window.innerWidth >= 860 && mobileMenu?.classList.contains('open')) toggleMenu();
       });
 
-      // Scroll reveal
+      // ── Scroll reveal ────────────────────────────────────────────────────────
       const ro = new IntersectionObserver(
         entries => entries.forEach(e => {
           if (e.isIntersecting) { e.target.classList.add('visible'); ro.unobserve(e.target); }
@@ -774,7 +811,7 @@ import '../styles/global.css';
       );
       document.querySelectorAll<HTMLElement>('.reveal').forEach(el => ro.observe(el));
 
-      // Formulář
+      // ── Formulář ─────────────────────────────────────────────────────────────
       (function (): void {
         const formEl     = document.getElementById('contact-form')     as HTMLFormElement   | null;
         const questionEl = document.getElementById('captcha-question') as HTMLElement       | null;
