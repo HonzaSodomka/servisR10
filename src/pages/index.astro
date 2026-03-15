@@ -22,12 +22,15 @@ import '../styles/global.css';
         --white:    #fff;
         --border:   #e0dedd;
 
-        /* Header výška odvozená z obsahu — stejný přístup jako Tank ONO.
-           Logo má height: var(--logo-h), header má padding var(--header-py) nahoře i dole.
-           JS tuto proměnnou nikdy nepřepisuje → žádný feedback loop, žádný blik. */
+        /* Header výška odvozená z obsahu — nikdy ji nepřepisuje JS */
         --logo-h:    52px;
         --header-py: 10px;
         --header-h:  calc(var(--logo-h) + var(--header-py) * 2);
+
+        /* Firefox/mobile viewport fix — JS nastaví při loadu,
+           update jen při změně šířky (ne při scrollu).
+           Fallback 100vh pro první render před JS. */
+        --real-vh: 100vh;
 
         --fd: 'Barlow Condensed', sans-serif;
         --fb: 'Barlow', sans-serif;
@@ -111,7 +114,7 @@ import '../styles/global.css';
         background: var(--white); border-top: 1px solid var(--border);
         padding: 1.5rem 1.25rem 2rem;
         display: none; flex-direction: column; gap: 0;
-        z-index: 48; max-height: calc(100svh - var(--header-h)); overflow-y: auto;
+        z-index: 48; max-height: calc(var(--real-vh) - var(--header-h)); overflow-y: auto;
         box-shadow: 0 8px 24px rgba(0,0,0,0.1);
       }
       #mobile-menu.open { display: flex; }
@@ -134,9 +137,9 @@ import '../styles/global.css';
       /* ── Hero ── */
       .hero {
         position: relative;
-        /* 100vh je stabilní — nereaguje na scroll lištu v mobilních prohlížečích.
-           Výsledek je totožný s přístupem v Tank ONO (calc(100vh - fixed-px)). */
-        height: calc(100vh - var(--header-h));
+        /* --real-vh je nastaveno JS při loadu, mění se jen při změně šířky →
+           Firefox při scrollu (kdy mizí adresní lišta) výšku nepřepočítá */
+        height: calc(var(--real-vh) - var(--header-h));
         min-height: 560px;
         display: flex; align-items: flex-end;
         overflow: hidden;
@@ -748,6 +751,26 @@ import '../styles/global.css';
 
     <!-- SKRIPTY -->
     <script>
+      // ── Firefox / mobile viewport fix ───────────────────────────────────────
+      // Uložíme výšku viewportu při loadu do --real-vh.
+      // Resize listener aktualizuje POUZE při změně šířky — čistá změna výšky
+      // (= scroll lišta prohlížeče se schovala/ukázala) se ignoruje.
+      // Výsledek: hero a mobilní menu nemění výšku při scrollu na Firefoxu/Safari.
+      let lastWidth = window.innerWidth;
+
+      function setVh(): void {
+        document.documentElement.style.setProperty('--real-vh', `${window.innerHeight}px`);
+      }
+
+      setVh();
+      window.addEventListener('load', setVh);
+      window.addEventListener('resize', () => {
+        if (window.innerWidth !== lastWidth) {
+          lastWidth = window.innerWidth;
+          setVh();
+        }
+      });
+
       // ── Mobilní menu ────────────────────────────────────────────────────────
       const burgerBtn  = document.getElementById('burger-btn')  as HTMLButtonElement | null;
       const mobileMenu = document.getElementById('mobile-menu') as HTMLDivElement   | null;
